@@ -4,5 +4,4 @@ const Note = ({ note }) => {
     )
   }
 
-
 export default Note
