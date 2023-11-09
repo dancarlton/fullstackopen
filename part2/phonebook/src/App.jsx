@@ -11,14 +11,12 @@ export default function App() {
   const [searchInput, setSearchInput] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios.get('http://localhost:3001/persons').then(response => {
-      console.log('promise fulfilled')
-      setPersons(response.data)
-    })
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => setPersons(response.data))
   }, [])
 
-  const addName = e => {
+  const addName = async e => {
     e.preventDefault()
 
     if (
@@ -33,9 +31,19 @@ export default function App() {
         name: newName,
         number: newNumber,
       }
-      setPersons([...persons, newPerson])
-      setNewName['']
-      setNewNumber['']
+
+      try {
+        const response = await axios.post(
+          'http://localhost:3001/persons',
+          newPerson
+        )
+        console.log('number posted')
+        setPersons([...persons, response.data])
+        setNewName('')
+        setNewNumber('')
+      } catch (err) {
+        console.log('Error posting number:', err)
+      }
     }
   }
 
