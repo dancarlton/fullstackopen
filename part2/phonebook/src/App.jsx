@@ -20,8 +20,24 @@ export default function App() {
   const addName = e => {
     e.preventDefault()
 
-    if (persons.find(person => person.number === newNumber)) {
-      alert(`${newName} or ${newNumber} is already added to phonebook`)
+    const existingPerson = persons.find(person => person.name === newName)
+
+    if (existingPerson) {
+      const updatedPerson = { ...existingPerson, number: newNumber }
+
+      personsService
+        .update(existingPerson.id, updatedPerson)
+        .then(response => {
+          setPersons(prevPersons =>
+            prevPersons.map(person =>
+              person.id === response.data.id ? response.data : person
+            )
+          )
+          console.log(`${response.data.name}'s number was updated`)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(err => console.error('Error updating person:', err))
     } else {
       const newPerson = {
         id: persons.length + 1,
@@ -68,7 +84,11 @@ export default function App() {
       console.error('Person not found for deletion')
     }
 
-    if (window.confirm(`Are you sure you want to delete '${personsToDelete.name}' from the phonebook?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete '${personsToDelete.name}' from the phonebook?`
+      )
+    ) {
       personsService
         .deletePerson(id)
         .then(() => {
