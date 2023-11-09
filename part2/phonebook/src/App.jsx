@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import SearchBar from './components/SearchBar'
 import Form from './components/Form'
 import Persons from './components/Persons'
@@ -62,6 +61,26 @@ export default function App() {
     })
   }
 
+  const handleDelete = id => {
+    const personsToDelete = persons.find(person => person.id === id)
+
+    if (!personsToDelete) {
+      console.error('Person not found for deletion')
+    }
+
+    if (window.confirm(`Are you sure you want to delete '${personsToDelete.name}' from the phonebook?`)) {
+      personsService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+          console.log(`${personsToDelete.name} was deleted from the phonebook`)
+        })
+        .catch(error => {
+          console.error('Error deleting person:', error.message)
+        })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -76,7 +95,11 @@ export default function App() {
         handleNewNumber={handleNewNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} searchInput={searchInput} />
+      <Persons
+        persons={persons}
+        searchInput={searchInput}
+        handleDelete={handleDelete}
+      />
     </div>
   )
 }

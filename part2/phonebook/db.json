@@ -19,36 +19,6 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
-    },
-    {
-      "id": 5,
-      "name": "dan",
-      "number": "12345"
-    },
-    {
-      "id": 6,
-      "name": "doug",
-      "number": "435134"
-    },
-    {
-      "id": 7,
-      "name": "dan",
-      "number": "123456"
-    },
-    {
-      "id": 8,
-      "name": "doug",
-      "number": "123541"
-    },
-    {
-      "id": 9,
-      "name": "don",
-      "number": "31451"
-    },
-    {
-      "id": 10,
-      "name": "don",
-      "number": "3462"
     }
   ]
 }
