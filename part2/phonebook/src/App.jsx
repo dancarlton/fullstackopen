@@ -3,6 +3,7 @@ import axios from 'axios'
 import SearchBar from './components/SearchBar'
 import Form from './components/Form'
 import Persons from './components/Persons'
+import personsService from './services/persons'
 
 export default function App() {
   const [persons, setPersons] = useState([])
@@ -11,19 +12,16 @@ export default function App() {
   const [searchInput, setSearchInput] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personsService
+      .getAll()
       .then(response => setPersons(response.data))
+      .catch(err => console.error('Error connecting to API:', err.message))
   }, [])
 
-  const addName = async e => {
+  const addName = e => {
     e.preventDefault()
 
-    if (
-      persons.find(
-        person => person.name === newName || person.number === newNumber
-      )
-    ) {
+    if (persons.find(person => person.number === newNumber)) {
       alert(`${newName} or ${newNumber} is already added to phonebook`)
     } else {
       const newPerson = {
@@ -32,18 +30,17 @@ export default function App() {
         number: newNumber,
       }
 
-      try {
-        const response = await axios.post(
-          'http://localhost:3001/persons',
-          newPerson
-        )
-        console.log('number posted')
-        setPersons([...persons, response.data])
-        setNewName('')
-        setNewNumber('')
-      } catch (err) {
-        console.log('Error posting number:', err)
-      }
+      personsService
+        .create(newPerson)
+        .then(response => {
+          setPersons([...persons, response.data])
+          console.log(`${response.data.name} was added to the phonebook`)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(err => {
+          console.error('Error adding new person:', err)
+        })
     }
   }
 
