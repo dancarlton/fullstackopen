@@ -3,5 +3,7 @@ export default function Notification({ message }) {
     return null
   }
 
-  return <div className='error'>{message}</div>
+  const className = message.startsWith('Error' ? 'error' : 'success')
+
+  return (<div className={className}>{message}</div>)
 }

@@ -15,7 +15,7 @@ export default function App() {
   useEffect(() => {
     personsService
       .getAll()
-      .then(response => setPersons(response.data))
+      .then(data => setPersons(data))
       .catch(err => console.error('Error connecting to API:', err.message))
   }, [])
 
@@ -39,7 +39,13 @@ export default function App() {
           setNewName('')
           setNewNumber('')
         })
-        .catch(err => console.error('Error updating person:', err))
+        .catch(err => {
+          if (err.response && err.response.status === 404) {
+            setNewNotification(`Information of ${existingPerson.name} has already been removed from the server`)
+          } else {
+            console.log('Error updating person:', err)
+          }
+        })
     } else {
       const newPerson = {
         id: persons.length + 1,
@@ -54,12 +60,10 @@ export default function App() {
           console.log(`${response.data.name} was added to the phonebook`)
           setNewName('')
           setNewNumber('')
-          setNewNotification(
-            `Added ${response.data.name}`
-          )
+          setNewNotification(`Added ${response.data.name}`)
           setTimeout(() => {
             setNewNotification(null)
-          }, 3000);
+          }, 3000)
         })
         .catch(err => {
           console.error('Error adding new person:', err)
@@ -102,6 +106,10 @@ export default function App() {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
           console.log(`${personsToDelete.name} was deleted from the phonebook`)
+          setNewNotification(`Deleted ${personsToDelete.name}`)
+          setTimeout(() => {
+            setNewNotification(null)
+          }, 3000)
         })
         .catch(error => {
           console.error('Error deleting person:', error.message)
