@@ -5,6 +5,7 @@ export default function App() {
   const [countries, setCountries] = useState([])
   const [searchInput, setSearchInput] = useState('')
   const [selectedCountry, setSelectedCountry] = useState(null)
+  const [weather, setWeather] = useState([])
 
   useEffect(() => {
     axios
@@ -20,12 +21,36 @@ export default function App() {
           }))
         )
       })
-      .catch(err => console.log('Error connecting to API:', err.message))
+      .catch(err =>
+        console.log('Error connecting to Countries API:', err.message)
+      )
+  }, [])
+
+  useEffect(() => {
+    axios
+      .get(
+        'http://api.openweathermap.org/data/2.5/weather?id=524901&appid=e72724f29c2a5cbf5d71f86ca51861d7'
+      )
+      .then(response => {
+        console.log(response.data)
+        const weatherData = {
+          icon: response.data.weather && response.data.weather[0].icon,
+          temperature:
+            response.data.main &&
+            Math.round(kelvinToCelcius(response.data.main.temp) * 10) / 10,
+          wind: response.data.wind && response.data.wind.speed,
+        }
+        setWeather(weatherData)
+      })
+      .catch(err =>
+        console.log('Error connecting to Weather API:', err.message)
+      )
   }, [])
 
   const handleSearch = e => {
     e.preventDefault()
     setSearchInput(e.target.value)
+    searchInput('')
   }
 
   const filteredCountries = countries.filter(country =>
@@ -35,6 +60,8 @@ export default function App() {
   const handleShowCountry = country => {
     setSelectedCountry(country)
   }
+
+  const kelvinToCelcius = kelvin => kelvin - 273.15
 
   return (
     <div>
@@ -74,6 +101,13 @@ export default function App() {
               alt={filteredCountries[0].flags.alt}
             />
           </div>
+          {/* SHOW WEATHER ON CURRENT COUNTRY */}
+          <h2>Weather in {filteredCountries[0].capital}</h2>
+          <p>temperature {weather.temperature} Celcius</p>
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+          />
+          <p>wind {weather.wind} m/s</p>
         </>
       )}
       {/* SHOW INFO ON SELECTED COUNTRY */}
