@@ -28,7 +28,7 @@ export default function App() {
   }
 
   const filteredCountries = countries.filter(country =>
-    country.name.includes(searchInput)
+    country.name.toLowerCase().includes(searchInput)
   )
 
   return (
@@ -41,7 +41,28 @@ export default function App() {
       )}
       {filteredCountries.length <= 10 &&
         filteredCountries.length > 1 &&
-        filteredCountries.map(country => <div>{country.name}</div>)}
+        filteredCountries.map(country => (
+          <div key={country.name}>{country.name}</div>
+        ))}
+      {filteredCountries.length === 1 && (
+        <>
+          <h1>{filteredCountries[0].name}</h1>
+          <div>capital {filteredCountries[0].capital}</div>
+          <div>area {filteredCountries[0].area}</div>
+          <h2>languages:</h2>
+          <ul>
+            {Object.values(filteredCountries[0].languages).map(language => (
+              <li key={language}>{language}</li>
+            ))}
+          </ul>
+          <div>
+            <img
+              src={filteredCountries[0].flags.png}
+              alt={filteredCountries[0].flags.alt}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }
