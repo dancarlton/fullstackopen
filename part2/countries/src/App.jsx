@@ -4,6 +4,7 @@ import axios from 'axios'
 export default function App() {
   const [countries, setCountries] = useState([])
   const [searchInput, setSearchInput] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     axios
@@ -31,19 +32,31 @@ export default function App() {
     country.name.toLowerCase().includes(searchInput)
   )
 
+  const handleShowCountry = country => {
+    setSelectedCountry(country)
+  }
+
   return (
     <div>
       <p>
         find countries <input type='text' onChange={handleSearch} />
       </p>
+      {/* TOO MANY COUNTRIES */}
       {filteredCountries.length > 10 && (
         <p>Too many matches, specify another filter</p>
       )}
+      {/* LESS THAN 10 COUNTRIES */}
       {filteredCountries.length <= 10 &&
         filteredCountries.length > 1 &&
         filteredCountries.map(country => (
-          <div key={country.name}>{country.name}</div>
+          <div key={country.name}>
+            {country.name}{' '}
+            <button type='submit' onClick={() => handleShowCountry(country)}>
+              show
+            </button>
+          </div>
         ))}
+      {/* SHOW INFO ON 1 COUNTRY */}
       {filteredCountries.length === 1 && (
         <>
           <h1>{filteredCountries[0].name}</h1>
@@ -59,6 +72,26 @@ export default function App() {
             <img
               src={filteredCountries[0].flags.png}
               alt={filteredCountries[0].flags.alt}
+            />
+          </div>
+        </>
+      )}
+      {/* SHOW INFO ON SELECTED COUNTRY */}
+      {selectedCountry && (
+        <>
+          <h1>{selectedCountry.name}</h1>
+          <div>capital {selectedCountry.capital}</div>
+          <div>area {selectedCountry.area}</div>
+          <h2>languages:</h2>
+          <ul>
+            {Object.values(selectedCountry.languages).map(language => (
+              <li key={language}>{language}</li>
+            ))}
+          </ul>
+          <div>
+            <img
+              src={selectedCountry.flags.png}
+              alt={selectedCountry.flags.alt}
             />
           </div>
         </>
