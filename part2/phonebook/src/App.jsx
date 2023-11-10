@@ -3,12 +3,14 @@ import SearchBar from './components/SearchBar'
 import Form from './components/Form'
 import Persons from './components/Persons'
 import personsService from './services/persons'
+import Notification from '../../notes/components/Notification'
 
 export default function App() {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const [newNotification, setNewNotification] = useState(null)
 
   useEffect(() => {
     personsService
@@ -52,6 +54,12 @@ export default function App() {
           console.log(`${response.data.name} was added to the phonebook`)
           setNewName('')
           setNewNumber('')
+          setNewNotification(
+            `Added ${response.data.name}`
+          )
+          setTimeout(() => {
+            setNewNotification(null)
+          }, 3000);
         })
         .catch(err => {
           console.error('Error adding new person:', err)
@@ -104,6 +112,7 @@ export default function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={newNotification} />
       <SearchBar searchInput={searchInput} handleSearch={handleSearch} />
 
       <h2>Add New</h2>

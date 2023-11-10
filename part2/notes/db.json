@@ -29,16 +29,6 @@
       "content": "a new note...",
       "important": true,
       "id": 6
-    },
-    {
-      "content": "note1",
-      "important": false,
-      "id": 7
-    },
-    {
-      "content": "note2",
-      "important": true,
-      "id": 8
     }
   ]
 }
