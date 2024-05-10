@@ -35,6 +35,7 @@ const generateId = () => {
   return maxId + 1
 }
 
+// add a note
 app.post('/api/notes', (request, response) => {
   const body = request.body
 
@@ -75,12 +76,12 @@ app.delete('/api/notes/:id', (request, response) => {
 response.status(204).end()
 })
 
-// add a note
-app.post('/api/notes', (request, response) => {
-  const note = request.body
-  console.log(note)
-  response.json(note)
-})
+
+// app.post('/api/notes', (request, response) => {
+//   const note = request.body
+//   console.log(note)
+//   response.json(note)
+// })
 
 
 
