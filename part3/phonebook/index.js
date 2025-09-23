@@ -1,12 +1,15 @@
 const express = require('express')
+const morgan = require('morgan')
+
 const app = express()
 
 app.use(express.json())
 
-const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
 let persons = [
   {
@@ -70,12 +73,16 @@ app.post('/api/persons', (req, res) => {
   const body = req.body
   const randomId = Math.floor(Math.random() * 1000000)
 
+  morgan.token('body', req => {
+    return req.method === 'POST' ? JSON.stringify(req.body) : ''
+  })
+
   if (!body.name || !body.number) {
     return res.status(400).json({ error: 'content missing' })
   }
 
   if (persons.some(person => person.name === body.name)) {
-    return res.status(400).json({error: 'name bust be unique'})
+    return res.status(400).json({ error: 'name bust be unique' })
   }
 
   const person = {
@@ -87,4 +94,11 @@ app.post('/api/persons', (req, res) => {
   persons = [...persons, person]
 
   res.json(person)
+})
+
+app.use(unknownEndpoint)
+
+const PORT = 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
