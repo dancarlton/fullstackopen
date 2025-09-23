@@ -1,8 +1,11 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 
+app.use(cors({
+  origin: 'http://localhost:3000'
+}))
 app.use(express.json())
-
 
 let notes = [
   {
@@ -25,6 +28,11 @@ let notes = [
 // find url
 app.get('/', (request, response) => {
   response.send('<h1>Hello Dan!</h1>')
+})
+
+// get notes
+app.get(`/api/notes`, (request, response) => {
+  response.json(notes)
 })
 
 // generate new id and create new notes
@@ -71,9 +79,9 @@ app.get('/api/notes/:id', (request, response) => {
 // delete a note
 app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
-  const note = notes.filter(note => note.id != id)
+  notes = notes.filter(note => note.id !== id)
 
-response.status(204).end()
+  response.status(204).end()
 })
 
 
