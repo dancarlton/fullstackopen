@@ -5,7 +5,13 @@ const app = express()
 
 app.use(express.json())
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+morgan.token('body', req => {
+  return req.method === 'POST' ? JSON.stringify(req.body) : ''
+})
+
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+)
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -72,10 +78,6 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
   const randomId = Math.floor(Math.random() * 1000000)
-
-  morgan.token('body', req => {
-    return req.method === 'POST' ? JSON.stringify(req.body) : ''
-  })
 
   if (!body.name || !body.number) {
     return res.status(400).json({ error: 'content missing' })
