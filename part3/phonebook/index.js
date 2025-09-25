@@ -23,7 +23,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 // add a person
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const { name, number } = req.body
   const randomId = Math.floor(Math.random() * 1000000)
 
@@ -42,7 +42,10 @@ app.post('/api/persons', (req, res) => {
         number,
       })
 
-      person.save().then(savedPerson => res.json(savedPerson))
+      person
+        .save()
+        .then(savedPerson => res.json(savedPerson))
+        .catch(error => next(error))
     }
   })
 })

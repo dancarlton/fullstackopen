@@ -10,7 +10,10 @@ export default function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchInput, setSearchInput] = useState('')
-  const [newNotification, setNewNotification] = useState(null)
+  const [newNotification, setNewNotification] = useState({
+    message: null,
+    type: null,
+  })
 
   useEffect(() => {
     personsService
@@ -41,9 +44,16 @@ export default function App() {
         })
         .catch(err => {
           if (err.response && err.response.status === 404) {
-            setNewNotification(`Information of ${existingPerson.name} has already been removed from the server`)
+            setNewNotification({
+              message: `Information of ${existingPerson.name} has already been removed from the server`,
+              type: 'success',
+            })
           } else {
             console.log('Error updating person:', err)
+            setNewNotification({
+              message: err.response.data.error,
+              type: 'error',
+            })
           }
         })
     } else {
@@ -60,13 +70,20 @@ export default function App() {
           console.log(`${response.data.name} was added to the phonebook`)
           setNewName('')
           setNewNumber('')
-          setNewNotification(`Added ${response.data.name}`)
+          setNewNotification({
+            message: `Added ${response.data.name}`,
+            type: 'success',
+          })
           setTimeout(() => {
-            setNewNotification(null)
+            setNewNotification({ message: null, type: null })
           }, 3000)
         })
         .catch(err => {
           console.error('Error adding new person:', err)
+          setNewNotification({
+            message: err.response.data.error,
+            type: 'error',
+          })
         })
     }
   }
@@ -106,13 +123,20 @@ export default function App() {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
           console.log(`${personsToDelete.name} was deleted from the phonebook`)
-          setNewNotification(`Deleted ${personsToDelete.name}`)
+          setNewNotification({
+            message: `Deleted ${personsToDelete.name}`,
+            type: 'success',
+          })
           setTimeout(() => {
-            setNewNotification(null)
+            setNewNotification({ message: null, type: null })
           }, 3000)
         })
         .catch(error => {
           console.error('Error deleting person:', error.message)
+          setNewNotification({
+            message: error.response.data.error,
+            type: 'error',
+          })
         })
     }
   }
@@ -120,7 +144,7 @@ export default function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={newNotification} />
+      <Notification message={newNotification.message} type={newNotification.type}/>
       <SearchBar searchInput={searchInput} handleSearch={handleSearch} />
 
       <h2>Add New</h2>
