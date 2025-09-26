@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "node --test",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon --watch index.js",
+    "test": "cross-env NODE_ENV=test node --test",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -14,12 +14,14 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "cross-env": "^10.0.0",
     "dotenv": "^17.2.2",
     "eslint": "^9.36.0",
     "express": "^5.1.0",
     "mongoose": "^8.18.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
   }
 }
